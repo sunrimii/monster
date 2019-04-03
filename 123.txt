@@ -1,220 +1,162 @@
-classdef app1  matlab.apps.AppBase
+function varargout = test(varargin)
+% TEST MATLAB code for test.fig
+%      TEST, by itself, creates a new TEST or raises the existing
+%      singleton*.
+%
+%      H = TEST returns the handle to a new TEST or the handle to
+%      the existing singleton*.
+%
+%      TEST('CALLBACK',hObject,eventData,handles,...) calls the local
+%      function named CALLBACK in TEST.M with the given input arguments.
+%
+%      TEST('Property','Value',...) creates a new TEST or raises the
+%      existing singleton*.  Starting from the left, property value pairs are
+%      applied to the GUI before test_OpeningFcn gets called.  An
+%      unrecognized property name or invalid value makes property application
+%      stop.  All inputs are passed to test_OpeningFcn via varargin.
+%
+%      *See GUI Options on GUIDE's Tools menu.  Choose "GUI allows only one
+%      instance to run (singleton)".
+%
+% See also: GUIDE, GUIDATA, GUIHANDLES
 
-    % Properties that correspond to app components
-    properties (Access = public)
-        UIFigure       matlab.ui.Figure
-        Label          matlab.ui.control.Label
-        Slider         matlab.ui.control.Slider
-        UIAxes         matlab.ui.control.UIAxes
-        Label_2        matlab.ui.control.Label
-        Slider_2       matlab.ui.control.Slider
-        Slider_3Label  matlab.ui.control.Label
-        Slider_3       matlab.ui.control.Slider
-    end
+% Edit the above text to modify the response to help test
 
-    methods (Access = private)
-        
-        function DrawAxes(app)
-            global Ax Ay Bx By Cx Cy;
-            global c;
-            global B;
-            
-            % 畫圓
-            theta = 0 0.01 2pi;
-            x = Bx + ccos(theta);
-            y = By + csin(theta);
-            plot(app.UIAxes, x, y);
-            hold(app.UIAxes, on);
-            
-            % 畫點A
-            plot(app.UIAxes, Ax, Ay, 'o');
-            
-            % 畫點B
-            plot(app.UIAxes, Bx, By, 'o');
-            
-            % 畫點C
-            plot(app.UIAxes, Cx, Cy, 'o');
-            
-            % 畫點D
-            Dx = Bx + ccos(B+pi);
-            Dy = By + csin(B+pi);
-            plot(app.UIAxes, Dx, Dy, 'o');
-            hold(app.UIAxes, on);
-            
-            % 畫線a
-            plot(app.UIAxes, [Cx Ax], [Cy Ay]);
-            hold(app.UIAxes, on);
-            
-            % 畫線b
-            plot(app.UIAxes, [Dx Cx], [Dy Cy]);
-            hold(app.UIAxes, on);
-            
-            % 畫線c
-            plot(app.UIAxes, [Bx Dx], [By Dy]);
-            hold(app.UIAxes, off);
-        end
-    end
+% Last Modified by GUIDE v2.5 03-Apr-2019 19:55:41
 
-    % Callbacks that handle component events
-    methods (Access = private)
+% Begin initialization code - DO NOT EDIT
+gui_Singleton = 1;
+gui_State = struct('gui_Name',       mfilename, ...
+                   'gui_Singleton',  gui_Singleton, ...
+                   'gui_OpeningFcn', @test_OpeningFcn, ...
+                   'gui_OutputFcn',  @test_OutputFcn, ...
+                   'gui_LayoutFcn',  [] , ...
+                   'gui_Callback',   []);
+if nargin && ischar(varargin{1})
+    gui_State.gui_Callback = str2func(varargin{1});
+end
 
-        % Code that executes after component creation
-        function startupFcn(app)
-            % 頂點
-            global Ax Ay Bx By Cx Cy;
-            Ax = 0;
-            Ay = 5;
-            Bx = 5;
-            By = 5;
-            Cx = 2.5;
-            Cy = 5;
-            
-            % 邊長
-            global b c d;
-            c = 2.5;
-            d = 2.5;
-            b = 0;
-            
-            % 角度
-            global B;
-            B = 0;
-            
-            DrawAxes(app)
-        end
+if nargout
+    [varargout{1:nargout}] = gui_mainfcn(gui_State, varargin{:});
+else
+    gui_mainfcn(gui_State, varargin{:});
+end
+% End initialization code - DO NOT EDIT
 
-        % Value changing function Slider
-        function SliderValueChanging(app, event)
-            % 滑塊位置
-        
-            global Bx Cx;
-            global b c d;
-            global B;
+% --- Executes just before test is made visible.
+function test_OpeningFcn(hObject, eventdata, handles, varargin)
+% This function has no output args, see OutputFcn.
+% hObject    handle to figure
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+% varargin   command line arguments to test (see VARARGIN)
 
-            Cx = event.Value;
+% Choose default command line output for test
+handles.output = hObject;
 
-            d = Bx - Cx;
-            
-            B = acos( (b^2-d^2-c^2)  (-2dc) );
+% Update handles structure
+guidata(hObject, handles);
 
-            DrawAxes(app);
-        end
+% UIWAIT makes test wait for user response (see UIRESUME)
+% uiwait(handles.figure1);
+global r;
+global circle_x circle_y;
 
-        % Value changing function Slider_2
-        function Slider_2ValueChanging(app, event)
-            global b c d;
-            global B;
-            
-            % 曲柄長
-            c = event.Value;
-            
-            B = acos( (b^2-d^2-c^2)  (-2dc) );
-            
-            DrawAxes(app);
-        end
+r = str2num(get(handles.edit1, 'String'));
 
-        % Value changing function Slider_3
-        function Slider_3ValueChanging(app, event)
-            global b c d;
-            global B;
-            
-            % 浮桿長
-            b = event.Value;
-            
-            B = acos( (b^2-d^2-c^2)  (-2dc) );
-            
-            DrawAxes(app);
-        end
-    end
 
-    % Component initialization
-    methods (Access = private)
+theta = 0: 0.01: 2*pi;
+circle_x = r * cos(theta);
+circle_y = r * sin(theta);
+plot(handles.axes1, circle_x, circle_y);
+hold on;
 
-        % Create UIFigure and components
-        function createComponents(app)
+theta = get(handles.slider1, 'Value');
+x1 = r * cos(theta);
+y1 = r * sin(theta);
+x2 = x1 + ((r*2)^2-y1^2)^0.5;
+y2 = 0;
+plot(handles.axes1, [x1,x2], [y1 y2]);
+hold off;
 
-            % Create UIFigure and hide until all components are created
-            app.UIFigure = uifigure('Visible', 'off');
-            app.UIFigure.Position = [100 100 640 640];
-            app.UIFigure.Name = 'UI Figure';
+axis(handles.axes1, [-10-r 10+r -10-r 10+r]);
 
-            % Create Label
-            app.Label = uilabel(app.UIFigure);
-            app.Label.HorizontalAlignment = 'right';
-            app.Label.Position = [207 619 53 22];
-            app.Label.Text = '滑塊位置';
+set(handles.text2, 'string', num2str(theta));
 
-            % Create Slider
-            app.Slider = uislider(app.UIFigure);
-            app.Slider.Limits = [0 5];
-            app.Slider.ValueChangingFcn = createCallbackFcn(app, @SliderValueChanging, true);
-            app.Slider.Position = [281 628 132 3];
-            app.Slider.Value = 2.5;
+% --- Outputs from this function are returned to the command line.
+function varargout = test_OutputFcn(hObject, eventdata, handles) 
+% varargout  cell array for returning output args (see VARARGOUT);
+% hObject    handle to figure
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
 
-            % Create UIAxes
-            app.UIAxes = uiaxes(app.UIFigure);
-            title(app.UIAxes, '')
-            xlabel(app.UIAxes, 'X')
-            ylabel(app.UIAxes, 'Y')
-            app.UIAxes.XLim = [-1 11];
-            app.UIAxes.YLim = [-1 11];
-            app.UIAxes.GridColor = [0 0.149 0.149];
-            app.UIAxes.Position = [21 -1 600 600];
+% Get default command line output from handles structure
+varargout{1} = handles.output;
 
-            % Create Label_2
-            app.Label_2 = uilabel(app.UIFigure);
-            app.Label_2.HorizontalAlignment = 'right';
-            app.Label_2.Position = [1 619 41 22];
-            app.Label_2.Text = '曲柄長';
+% --- Executes on slider movement.
+function slider1_Callback(hObject, eventdata, handles)
+% hObject    handle to slider1 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
 
-            % Create Slider_2
-            app.Slider_2 = uislider(app.UIFigure);
-            app.Slider_2.Limits = [0 5];
-            app.Slider_2.ValueChangingFcn = createCallbackFcn(app, @Slider_2ValueChanging, true);
-            app.Slider_2.Position = [58 628 144 3];
-            app.Slider_2.Value = 2.5;
+% Hints: get(hObject,'Value') returns position of slider
+%        get(hObject,'Min') and get(hObject,'Max') to determine range of slider
 
-            % Create Slider_3Label
-            app.Slider_3Label = uilabel(app.UIFigure);
-            app.Slider_3Label.HorizontalAlignment = 'right';
-            app.Slider_3Label.Position = [433 619 41 22];
-            app.Slider_3Label.Text = '浮桿長';
+global r;
+global circle_x circle_y;
 
-            % Create Slider_3
-            app.Slider_3 = uislider(app.UIFigure);
-            app.Slider_3.Limits = [0 5];
-            app.Slider_3.ValueChangingFcn = createCallbackFcn(app, @Slider_3ValueChanging, true);
-            app.Slider_3.Position = [495 628 132 3];
+theta = 0: 0.01: 2*pi;
+circle_x = r * cos(theta);
+circle_y = r * sin(theta);
+plot(handles.axes1, circle_x, circle_y);
+hold on;
 
-            % Show the figure after all components are created
-            app.UIFigure.Visible = 'on';
-        end
-    end
+theta = get(handles.slider1, 'Value');
+x1 = r * cos(theta);
+y1 = r * sin(theta);
+x2 = x1 + ((r*2)^2-y1^2)^0.5;
+y2 = 0;
+plot(handles.axes1, [x1,x2], [y1 y2]);
+hold off;
 
-    % App creation and deletion
-    methods (Access = public)
+axis(handles.axes1, [-10-r 10+r -10-r 10+r]);
 
-        % Construct app
-        function app = app1
+set(handles.text2, 'string', num2str(theta));
 
-            % Create UIFigure and components
-            createComponents(app)
+% --- Executes during object creation, after setting all properties.
+function slider1_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to slider1 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
 
-            % Register the app with App Designer
-            registerApp(app, app.UIFigure)
+% Hint: slider controls usually have a light gray background.
+if isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor',[.9 .9 .9]);
+end
 
-            % Execute the startup function
-            runStartupFcn(app, @startupFcn)
+% --- Executes during object creation, after setting all properties.
+function edit1_Callback(hObject, eventdata, handles)
+% hObject    handle to edit1 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
 
-            if nargout == 0
-                clear app
-            end
-        end
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
 
-        % Code that executes before app deletion
-        function delete(app)
+global r;
 
-            % Delete UIFigure when app is deleted
-            delete(app.UIFigure)
-        end
-    end
+r = str2num(get(handles.edit1, 'String'));
+
+% --- Executes during object creation, after setting all properties.
+function edit1_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to slider1 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: slider controls usually have a light gray background.
+if isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor',[.9 .9 .9]);
 end
