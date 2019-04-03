@@ -1,0 +1,220 @@
+classdef app1  matlab.apps.AppBase
+
+    % Properties that correspond to app components
+    properties (Access = public)
+        UIFigure       matlab.ui.Figure
+        Label          matlab.ui.control.Label
+        Slider         matlab.ui.control.Slider
+        UIAxes         matlab.ui.control.UIAxes
+        Label_2        matlab.ui.control.Label
+        Slider_2       matlab.ui.control.Slider
+        Slider_3Label  matlab.ui.control.Label
+        Slider_3       matlab.ui.control.Slider
+    end
+
+    methods (Access = private)
+        
+        function DrawAxes(app)
+            global Ax Ay Bx By Cx Cy;
+            global c;
+            global B;
+            
+            % 畫圓
+            theta = 0 0.01 2pi;
+            x = Bx + ccos(theta);
+            y = By + csin(theta);
+            plot(app.UIAxes, x, y);
+            hold(app.UIAxes, on);
+            
+            % 畫點A
+            plot(app.UIAxes, Ax, Ay, 'o');
+            
+            % 畫點B
+            plot(app.UIAxes, Bx, By, 'o');
+            
+            % 畫點C
+            plot(app.UIAxes, Cx, Cy, 'o');
+            
+            % 畫點D
+            Dx = Bx + ccos(B+pi);
+            Dy = By + csin(B+pi);
+            plot(app.UIAxes, Dx, Dy, 'o');
+            hold(app.UIAxes, on);
+            
+            % 畫線a
+            plot(app.UIAxes, [Cx Ax], [Cy Ay]);
+            hold(app.UIAxes, on);
+            
+            % 畫線b
+            plot(app.UIAxes, [Dx Cx], [Dy Cy]);
+            hold(app.UIAxes, on);
+            
+            % 畫線c
+            plot(app.UIAxes, [Bx Dx], [By Dy]);
+            hold(app.UIAxes, off);
+        end
+    end
+
+    % Callbacks that handle component events
+    methods (Access = private)
+
+        % Code that executes after component creation
+        function startupFcn(app)
+            % 頂點
+            global Ax Ay Bx By Cx Cy;
+            Ax = 0;
+            Ay = 5;
+            Bx = 5;
+            By = 5;
+            Cx = 2.5;
+            Cy = 5;
+            
+            % 邊長
+            global b c d;
+            c = 2.5;
+            d = 2.5;
+            b = 0;
+            
+            % 角度
+            global B;
+            B = 0;
+            
+            DrawAxes(app)
+        end
+
+        % Value changing function Slider
+        function SliderValueChanging(app, event)
+            % 滑塊位置
+        
+            global Bx Cx;
+            global b c d;
+            global B;
+
+            Cx = event.Value;
+
+            d = Bx - Cx;
+            
+            B = acos( (b^2-d^2-c^2)  (-2dc) );
+
+            DrawAxes(app);
+        end
+
+        % Value changing function Slider_2
+        function Slider_2ValueChanging(app, event)
+            global b c d;
+            global B;
+            
+            % 曲柄長
+            c = event.Value;
+            
+            B = acos( (b^2-d^2-c^2)  (-2dc) );
+            
+            DrawAxes(app);
+        end
+
+        % Value changing function Slider_3
+        function Slider_3ValueChanging(app, event)
+            global b c d;
+            global B;
+            
+            % 浮桿長
+            b = event.Value;
+            
+            B = acos( (b^2-d^2-c^2)  (-2dc) );
+            
+            DrawAxes(app);
+        end
+    end
+
+    % Component initialization
+    methods (Access = private)
+
+        % Create UIFigure and components
+        function createComponents(app)
+
+            % Create UIFigure and hide until all components are created
+            app.UIFigure = uifigure('Visible', 'off');
+            app.UIFigure.Position = [100 100 640 640];
+            app.UIFigure.Name = 'UI Figure';
+
+            % Create Label
+            app.Label = uilabel(app.UIFigure);
+            app.Label.HorizontalAlignment = 'right';
+            app.Label.Position = [207 619 53 22];
+            app.Label.Text = '滑塊位置';
+
+            % Create Slider
+            app.Slider = uislider(app.UIFigure);
+            app.Slider.Limits = [0 5];
+            app.Slider.ValueChangingFcn = createCallbackFcn(app, @SliderValueChanging, true);
+            app.Slider.Position = [281 628 132 3];
+            app.Slider.Value = 2.5;
+
+            % Create UIAxes
+            app.UIAxes = uiaxes(app.UIFigure);
+            title(app.UIAxes, '')
+            xlabel(app.UIAxes, 'X')
+            ylabel(app.UIAxes, 'Y')
+            app.UIAxes.XLim = [-1 11];
+            app.UIAxes.YLim = [-1 11];
+            app.UIAxes.GridColor = [0 0.149 0.149];
+            app.UIAxes.Position = [21 -1 600 600];
+
+            % Create Label_2
+            app.Label_2 = uilabel(app.UIFigure);
+            app.Label_2.HorizontalAlignment = 'right';
+            app.Label_2.Position = [1 619 41 22];
+            app.Label_2.Text = '曲柄長';
+
+            % Create Slider_2
+            app.Slider_2 = uislider(app.UIFigure);
+            app.Slider_2.Limits = [0 5];
+            app.Slider_2.ValueChangingFcn = createCallbackFcn(app, @Slider_2ValueChanging, true);
+            app.Slider_2.Position = [58 628 144 3];
+            app.Slider_2.Value = 2.5;
+
+            % Create Slider_3Label
+            app.Slider_3Label = uilabel(app.UIFigure);
+            app.Slider_3Label.HorizontalAlignment = 'right';
+            app.Slider_3Label.Position = [433 619 41 22];
+            app.Slider_3Label.Text = '浮桿長';
+
+            % Create Slider_3
+            app.Slider_3 = uislider(app.UIFigure);
+            app.Slider_3.Limits = [0 5];
+            app.Slider_3.ValueChangingFcn = createCallbackFcn(app, @Slider_3ValueChanging, true);
+            app.Slider_3.Position = [495 628 132 3];
+
+            % Show the figure after all components are created
+            app.UIFigure.Visible = 'on';
+        end
+    end
+
+    % App creation and deletion
+    methods (Access = public)
+
+        % Construct app
+        function app = app1
+
+            % Create UIFigure and components
+            createComponents(app)
+
+            % Register the app with App Designer
+            registerApp(app, app.UIFigure)
+
+            % Execute the startup function
+            runStartupFcn(app, @startupFcn)
+
+            if nargout == 0
+                clear app
+            end
+        end
+
+        % Code that executes before app deletion
+        function delete(app)
+
+            % Delete UIFigure when app is deleted
+            delete(app.UIFigure)
+        end
+    end
+end
