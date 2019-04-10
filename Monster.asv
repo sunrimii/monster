@@ -2,10 +2,13 @@ classdef Monster
     properties
         theta
         pos_of_body
-        body;
-        pos_of_knee;
-        r_of_knee;
-        len_of_leg;
+        body
+        pos_of_knee1
+        pos_of_knee3
+        pos_of_knee2
+        pos_of_knee4
+        r_of_knee
+        len_of_leg
     end
     
     methods
@@ -13,16 +16,19 @@ classdef Monster
             monster.theta = linspace(0, 2*pi, 45);
             
             monster.pos_of_body = [0; 0];
-            r_of_body = 4;  
+            r_of_body = 2;  
             monster.body = [cos(monster.theta); sin(monster.theta);] * r_of_body + monster.pos_of_body;
 
-            monster.pos_of_knee = [[8; 0] [-8; 0]];
+            monster.pos_of_knee1 = [8; 0];
+            monster.pos_of_knee2 = [-8; 0];
+            monster.pos_of_knee3 = [8; 0];
+            monster.pos_of_knee4 = [-8; 0];
             monster.r_of_knee = 6;
 
             monster.len_of_leg = 8;
         end
         
-        function update(monster, A)
+        function update(monster, pos_of_knee, A)
             C2G = monster.len_of_leg;
             BC1 = monster.r_of_knee;
             
@@ -70,9 +76,6 @@ classdef Monster
                 
 %                 disp(AC)
             end
-            
-            hold off;
-            axis([-15 15 -15 15]);
         end
     end 
 end
