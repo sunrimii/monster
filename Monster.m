@@ -12,14 +12,17 @@ classdef Monster
     end
     
     methods
-        % ´ÿ∫c®Á¶°
+        % Âª∫ÊßãÂáΩÂºè
         function monster = Monster()
             monster.theta = linspace(0, 2*pi, 45);
             
             monster.pos_of_body = [0; 0];
             r_of_body = 2;  
-            monster.body = [cos(monster.theta); sin(monster.theta);] * r_of_body + monster.pos_of_body;
-
+%             monster.body = [cos(monster.theta); sin(monster.theta)] * r_of_body .+ monster.pos_of_body;
+            monster.body = [cos(monster.theta); sin(monster.theta)] * r_of_body;
+            for i = 1: length(monster.body)
+                monster.body(:,i) = monster.body(:,i) + monster.pos_of_body;
+            end
             monster.pos_of_knee1 = [8; 0];
             monster.pos_of_knee2 = [-8; 0];
             monster.pos_of_knee3 = [8; 0];
@@ -35,43 +38,48 @@ classdef Monster
             B = pos_of_knee;
             
             AB = norm(A - B);
-            AC = norm(monster.pos_of_body - B) * 1.3; % ±Ï™¯
-            ABC1 = acos((BC1^2 + AB^2 - AC^2) / (2 * BC1 * AB)); % æl©∂©w≤z
-            ABC1_offest = asin((A(2) - B(2)) / AB); % §£•i•Œacos((A(1) - B(1)) / AB)
-            if B(1) < monster.pos_of_body % ≠YΩ•ª\¶b®≠≈È™∫•™√‰
+            AC = norm(monster.pos_of_body - B) * 1.3; % Ê°øÈï∑
+            ABC1 = acos((BC1^2 + AB^2 - AC^2) / (2 * BC1 * AB)); % È§òÂº¶ÂÆöÁêÜ
+            ABC1_offest = asin((A(2) - B(2)) / AB); % ‰∏çÂèØÁî®acos((A(1) - B(1)) / AB)
+            if B(1) < monster.pos_of_body % Ëã•ËÜùËìãÂú®Ë∫´È´îÁöÑÂ∑¶ÈÇä
                 C1 = [cos(ABC1 + ABC1_offest); sin(ABC1 + ABC1_offest)] * BC1 + B;
                 C2 = [cos(-ABC1 + ABC1_offest); sin(-ABC1 + ABC1_offest)] * BC1 + B;
                 D = [0 -1; 1 0] * (C1 - B) + B;
-            else % ≠YΩ•ª\¶b®≠≈È™∫•k√‰
+            else % Ëã•ËÜùËìãÂú®Ë∫´È´îÁöÑÂè≥ÈÇä
                 C1 = [cos(pi - (ABC1 + ABC1_offest)); sin(pi - (ABC1 + ABC1_offest))] * BC1 + B;
                 C2 = [cos(pi - (-ABC1 + ABC1_offest)); sin(pi - (-ABC1 + ABC1_offest))] * BC1 + B;
-                D = [0 1; -1 0] * (C1 - B) + B; % •˝≤æ¶^≠Ï¶Ï¶A±€¬‡¶A∞æ≤æ
+                D = [0 1; -1 0] * (C1 - B) + B; % ÂÖàÁßªÂõûÂéü‰ΩçÂÜçÊóãËΩâÂÜçÂÅèÁßª
             end
 
             E = (D + C2) / 2;
-            F = (E - B) * 2 + B; % §∆¬≤ F = ((E - B) - (B - B)) * 2 + B;
-            if B(1) < monster.pos_of_body % ≠YΩ•ª\¶b®≠≈È™∫•™√‰
-                G = ([0 -1; 1 0] * (F - C2)) / norm(F - C2) * C2G  + C2; % §∆¬≤ G = [0 -1; 1 0] * ((F - B) - (C2 - B)) / norm(F - C2) * C2G + C2;
-            else % ≠YΩ•ª\¶b®≠≈È™∫•k√‰
-                G = ([0 1; -1 0] * (F - C2)) / norm(F - C2) * C2G  + C2; % §∆¬≤ G = [0 -1; 1 0] * ((F - B) - (C2 - B)) / norm(F - C2) * C2G + C2;
+            F = (E - B) * 2 + B; % ÂåñÁ∞° F = ((E - B) - (B - B)) * 2 + B;
+            if B(1) < monster.pos_of_body % Ëã•ËÜùËìãÂú®Ë∫´È´îÁöÑÂ∑¶ÈÇä
+                G = ([0 -1; 1 0] * (F - C2)) / norm(F - C2) * C2G  + C2; % ÂåñÁ∞° G = [0 -1; 1 0] * ((F - B) - (C2 - B)) / norm(F - C2) * C2G + C2;
+            else % Ëã•ËÜùËìãÂú®Ë∫´È´îÁöÑÂè≥ÈÇä
+                G = ([0 1; -1 0] * (F - C2)) / norm(F - C2) * C2G  + C2; % ÂåñÁ∞° G = [0 -1; 1 0] * ((F - B) - (C2 - B)) / norm(F - C2) * C2G + C2;
             end
 
-            knee = [cos(monster.theta); sin(monster.theta)] * BC1 + B;
+%             knee = [cos(monster.theta); sin(monster.theta)] * BC1 + B;
+            knee = [cos(monster.theta); sin(monster.theta)] * BC1
+            for i = 1: length(knee)
+                knee(:,i) = knee(:,i) + B;
+            end
+            
             plot(knee(1,:), knee(2,:));hold on;
             plot(monster.body(1,:), monster.body(2,:));hold on;
 
 %                 points = [A B C1 C2 D E F G]';
 %                 points_names = {'A', 'B', 'C1', 'C2' 'D', 'E', 'F', 'G'};
 %                 for ii = 1: length(points)
-%                 % µe¬I
+%                 % Áï´Èªû
 %                     plot(points(ii, 1), points(ii, 2), 'o');hold on;
-%                 % ≈„•‹§Â¶r
+%                 % È°ØÁ§∫ÊñáÂ≠ó
 %                     text(points(ii, 1), points(ii, 2), points_names(i));
 %                 end
 
             lines = [A' C1'; A' C2'; B' C1'; B' C2'; B' D'; B' C2'; F' D'; F' C2'; G' F'; G' C2'];
             for iii = 1: size(lines, 1)
-               % µeΩu
+               % Áï´Á∑ö
                plot([lines(iii, 1) lines(iii, 3)], [lines(iii, 2) lines(iii, 4)]);hold on;
             end
                 
@@ -79,4 +87,3 @@ classdef Monster
         end
     end 
 end
-
